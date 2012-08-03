@@ -22,13 +22,120 @@
             <li>Provides Seperation of Concerns (data and business rules, flow logic and presentation).</li>
             <li>Ideal for single-page applications where the heavy lifting is done client-side.</li>
             <li>Integrates well with REST-ful (CRUD) resources (JSON).</li>
-            <li>Composed of Models, Collections, Views and Routers.</li>
+            <li>Models, Collections, Views and Routers.</li>
         </ul>
     </div>
     <div class="slide">
-    	<pre>
-        	var tmp = 1;
-        </pre>
+    	<h1>Models & Collections</h1>
+        <ul>
+        	<li>Models contain application data and business rules (conversions, validations, access control, etc.).</li>
+            <li>Collections are ordered sets of models and provide a number of useful methods for working with collections (e.g. sort, push, pop, at, etc.).</li>
+            <li>Models and Collections use REST-ful URLs to retrieve and persist data to the server (i.e. model.fetch() and model.save() trigger GET and POST ajax calls that populate model attributes or persist model to the server).</li>
+            <li>Models publish/trigger events when their attributes change and Views subscribe/bind to these events and update themselves.</li>
+        </ul>
+    </div>
+    <div class="slide">
+    	<pre class="prettyprint">
+// Model
+var Image = Backbone.Model.extend({
+    url: '/images',
+    defaults: { ... },
+    initialize: function() { ... }    
+});
+
+var image = new Image();
+image.set({ 'src': 'placeholder.png' });
+image.get('src');
+image.save();
+
+// Collection
+var Images = Backbone.Collection.extend({
+    url: '/images',
+    model = Image,
+    initialize: function() { ... },
+    select: function() {
+    	...
+        this.trigger('change:selected');
+    }    
+});
+
+var images = new Images();
+var image = images.at(0);
+
+</pre>
+    </div>
+    <div class="slide">
+    	<h1>Views</h1>
+        <ul>
+        	<li>Views reflect the current state of a Model or Collection and subscribe/bind to events that are published/triggered by the Model or Collection.</li>
+            <li>Contain a reference to the DOM object created in the browser (el and $el) and optionally a Javascript template used to render the DOM object.</li>
+            <li>Views also manage a collection of events for the DOM object. </li>
+        </ul>
+    </div>
+    <div class="slide">
+    	<pre class="prettyprint">
+// View
+var ThumbnailView = Backbone.View.extend({
+    template: _.template( ... ),
+    initialize: function(options) {
+        this.$el = $(this.el);
+        this.collection.bind("change:selected", this.changeSelected, this);	
+    },
+    events: {
+        "click": "selectThumb"
+    },
+    selectThumb: function() {
+        this.collection.select(this.model);
+    },
+    changeSelected: function() {
+        this.model.get("current") ? this.$el.addClass("selected") : this.$el.removeClass("selected");	
+    },
+    render: function() {
+        if(this.model.get("current")) {
+            this.$el.addClass("selected");
+        }
+        this.$el.html(this.template(this.model.toJSON()));
+        return this;
+    }
+});
+</pre>
+    </div>
+    <div class="slide">
+    	<h1>Routers</h1>
+        <ul>
+        	<li>Routers manage an applications state and provide linkable, bookmarkable, shareable URLs for important locations in the application.</li>
+            <li>Contain a collection of routes which map to functions that represent locations in the application.</li>
+            <li>Used to be called a Controller, but the authors changed it to Router as it isn't really a controller in a classic MVC sense.</li>
+            <li>Share control of application flow with the Views.</li>
+            <li>Backbone has a built-in history object that enables browser navigation (hashchange events or pushState).</li>
+        </ul>
+    </div>
+    <div class="slide">
+<pre class="prettyprint">
+// Router
+var OurWorkRouter = Backbone.Router.extend({
+    views: {},
+    routes: {
+        '': 'index',
+        ':category': 'images'
+    },
+    initialize: function() {
+        this.images = new Images();
+        this.views['_index'] = new IndexView({ collection: this.images });
+        this.views['_pagination'] = new PaginationView({ collection: this.images });
+        this.views['_show'] = new ShowView({ collection: this.images });
+        return this; 
+    },
+    index: function() {
+        ...
+        this.images.reset( ... ); // Bootstrap default collection
+    },
+    images: function(category) {
+        ...
+        this.images.fetch({ data: { category: category } });
+    }
+});
+</pre>
     </div>
 </div>
 <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
@@ -37,6 +144,7 @@
 <script type="text/javascript">
 	$(function() {
 		$("#presentation").fathom();
+		prettyPrint();
 	});
 </script>
 </body>
