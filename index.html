@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Brief Introduction to Backbone.js</title>
+<link rel="stylesheet" href="css/presentation.css" />
+<link rel="stylesheet" href="css/prettify.css"
+</head>
+<body>
+<div id="presentation">
+	<div class="slide">
+    	<h1 id="prelogo">Brief Introduction to</h1>
+        <h1 id="logo">Backbone.js Logo</h1>
+        <div class="footer">
+        	Tristan Smith -
+            <a href="mailto:tristan.smith@markit.com">tristan.smith@markit.com</a>
+        </div>
+    </div>
+    <div class="slide">
+    	<h1>What is Backbone.js?</h1>
+        <ul>
+        	<li>MVC-like (MV*) framework for structuring Javascript applications.</li>
+            <li>Provides Seperation of Concerns (data and business rules, flow logic and presentation).</li>
+            <li>Ideal for single-page applications where the heavy lifting is done client-side.</li>
+            <li>Integrates well with REST-ful (CRUD) resources (JSON).</li>
+            <li>Composed of Models, Collections, Views and Routers.</li>
+        </ul>
+    </div>
+    <div class="slide">
+    	<pre>
+        	var tmp = 1;
+        </pre>
+    </div>
+</div>
+<script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+<script type="text/javascript" src="https://raw.github.com/markdalgleish/fathom/master/fathom.min.js"></script>
+<script type="text/javascript" src="js/prettify.js"></script>
+<script type="text/javascript">
+	$(function() {
+		$("#presentation").fathom();
+	});
+</script>
+</body>
+</html>
